@@ -1,4 +1,4 @@
-name: Backend Deploy
+name: FTP Deploy Backend
 
 on:
   push:
@@ -9,32 +9,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install backend dependencies
+      - name: Install dependencies
         run: npm install
 
       - name: Build backend (TypeScript → JS)
         run: npm run build
 
-      - name: Remove dev dependencies
-        run: npm prune --production
-
-      - name: Upload backend via FTP
+      - name: Upload dist folder to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/
-          server-dir: mern_api/dist/
-
-      - name: Upload package.json
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./package.json
           server-dir: mern_api/
